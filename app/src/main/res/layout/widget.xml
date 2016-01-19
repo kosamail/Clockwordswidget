@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:id="@+id/widlayout"
+    android:paddingTop="1dp"
+    android:paddingBottom="1dp">
+
+    <!-- Стиль текствью берем из папки вэльюс, там есть файл shadow хмл в нем описан стиль с именем Shadow-->
+
+    <TextView
+        style="@style/Shadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textSize="38sp"
+        android:id="@+id/time"
+        android:gravity="center_horizontal|top"
+        android:textStyle="bold"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        style="@style/Shadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/date"
+        android:textSize="14sp"
+        android:id="@+id/date"
+        android:gravity="center_horizontal"
+        android:layout_above="@+id/alarm"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:id="@+id/icon"
+        android:src="@drawable/alarmwhite"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/alarm"
+        android:layout_toStartOf="@+id/alarm" />
+
+    <TextView
+        style="@style/Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textSize="14sp"
+        android:id="@+id/alarm"
+        android:gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <!--ImageView
+        android:src="@android:drawable/ic_menu_preferences"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/imageconfig"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" /-->
+</RelativeLayout>
+<!--        android:background="@xml/back" -->

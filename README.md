@@ -1,0 +1,1 @@
+A simple clock widget. Widget shows the current time.It has some appearance settings. Will show alarm settings on tap.

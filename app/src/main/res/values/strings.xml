@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Clock</string>
+    <string name="radio1">White</string>
+    <string name="radio2">Green</string>
+    <string name="radio3">Blue</string>
+    <string name="ok">OK</string>
+    <string name="date">Update</string>
+    <string name="alarmisset">Alarm not set</string>
+    <string name="selectcolor">Select text color:</string>
+    <string name="checkzeroback">Transparent background color</string>
+</resources>
