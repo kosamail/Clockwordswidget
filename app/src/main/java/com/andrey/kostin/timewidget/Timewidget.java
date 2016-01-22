@@ -10,8 +10,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -54,7 +52,7 @@ public class Timewidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        Log.d(LOG_TAG, "onUpdate " + Arrays.toString(appWidgetIds));
+//        Log.d(LOG_TAG, "onUpdate " + Arrays.toString(appWidgetIds));
         SharedPreferences sp = context.getSharedPreferences(Config.WIDGET_PREF, Context.MODE_PRIVATE);
         for (int id : appWidgetIds) {updateWidget(context, appWidgetManager, sp, id);}        //вызываем метод обновления внешнего вида каждого виджета функцией updateWidget
     }
@@ -98,7 +96,7 @@ public class Timewidget extends AppWidgetProvider {
     }
 
     static void updateWidget(Context context, AppWidgetManager appWidgetManager,SharedPreferences sp, int widgetID) { //метод выполняется внутри метода Онапдейт
-        Log.d(LOG_TAG, "updateWidget " + widgetID);
+//        Log.d(LOG_TAG, "updateWidget " + widgetID);
 
         // Определяем текущее время непосредственно в теле таймвиджета
         SimpleDateFormat df;                 //переменная для задания формата времени
@@ -173,12 +171,12 @@ public class Timewidget extends AppWidgetProvider {
 
          PendingIntent palarm;
          Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
-         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
+//         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
          Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
 
         if (foundClockImpl){String packageName = sp.getString(Config.PAKAGE_NAME + widgetID, " ");
                             String className = sp.getString(Config.CLASS_NAME + widgetID, " ");
-            Log.d(LOG_TAG, "packageName = "+ packageName + " className = "+ className);
+//            Log.d(LOG_TAG, "packageName = "+ packageName + " className = "+ className);
                             ComponentName cn = new ComponentName(packageName, className);
                             alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
                             palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);}   //Если флаг установлен - используем найденное приложение будильника
