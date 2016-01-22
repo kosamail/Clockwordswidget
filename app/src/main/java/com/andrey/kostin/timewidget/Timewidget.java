@@ -170,47 +170,22 @@ public class Timewidget extends AppWidgetProvider {
 
 
         //Вызов встроенного приложения часов-будильника по нажатию на часы или время следующего будильника если приложение будильника программой обнаружено
-        //Настройка вызова встроенного приложения часов-будильника по нажатию на часы или время следующего будильника
-        PackageManager packageManager = context.getPackageManager();
-        Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
-        // Поиск встроенного приложения будильника
-        String clockImpls[][] = {                           //список известных встроенных приложений по производителям
-                {"HTC Alarm Clock", "com.htc.android.worldclock", "com.htc.android.worldclock.WorldClockTabControl" },
-                {"Standar Alarm Clock", "com.android.deskclock", "com.android.deskclock.AlarmClock"},
-                {"Standar Alarm Clock2", "com.google.android.deskclock", "com.android.deskclock.AlarmClock"},
-                {"Froyo Nexus Alarm Clock", "com.google.android.deskclock", "com.android.deskclock.DeskClock"},
-                {"Moto Blur Alarm Clock", "com.motorola.blur.alarmclock",  "com.motorola.blur.alarmclock.AlarmClock"},
-                {"Samsung Galaxy Clock", "com.sec.android.app.clockpackage","com.sec.android.app.clockpackage.ClockPackage"} ,
-                {"Sony Ericsson Xperia Z", "com.sonyericsson.organizer", "com.sonyericsson.organizer.Organizer_WorldClock" },
-                {"ASUS Tablets", "com.asus.deskclock", "com.asus.deskclock.DeskClock"},
-                {"LG Alarm Clock", "com.lge.clock", "com.lge.clock.AlarmClockActivity"}        };
-        Boolean foundClockImpl = false;                         //инициализируем переменную ложью, если что-то найдется будет далее истина
-        for(int i=0; i<clockImpls.length; i++) {
-            String vendor =      clockImpls[i][0];
-            String packageName = clockImpls[i][1];
-            String className =   clockImpls[i][2];
-            try {
-                ComponentName cn = new ComponentName(packageName, className);
-                ActivityInfo aInfo = packageManager.getActivityInfo(cn, PackageManager.GET_META_DATA);
-                alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
-                Log.d(LOG_TAG, "Found " + vendor + " --> " + packageName + "/" + className);
-                foundClockImpl = true;                  //здесь в переменную флаг приложения будильника помещаем 1 - мы его нашли и можем использовать далее
 
-/*                SharedPreferences.Editor editor = context.getSharedPreferences(Config.WIDGET_PREF, Context.MODE_PRIVATE).edit(); //создаем эдитор для записи значений в шаредпреференсес
-                editor.putBoolean(Config.ALARM_FLAG, foundClockImpl);//записываем в шаредпреференсес один для всех флаг приложения будильника
-                editor.putString(Config.PAKAGE_NAME, packageName);   //записываем в шаредпреференсес один для всех пакаджнейм будильника
-                editor.putString(Config.CLASS_NAME, className);      //записываем в шаредпреференсес один для всех класснейм будильника
-                editor.commit();                                     //сохраняем значения в шаредпреференсес*/
-            } catch (PackageManager.NameNotFoundException e) {Log.d(LOG_TAG, vendor + " does not exists");}
-        }
-        PendingIntent palarm;
-//        foundClockImpl = sp.getBoolean(Config.ALARM_FLAG, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
-        if (foundClockImpl){palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);}   //Если флаг установлен - используем найденное приложение будильника
+         PendingIntent palarm;
+         Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
+         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
+         Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+
+        if (foundClockImpl){String packageName = sp.getString(Config.PAKAGE_NAME + widgetID, " ");
+                            String className = sp.getString(Config.CLASS_NAME + widgetID, " ");
+            Log.d(LOG_TAG, "packageName = "+ packageName + " className = "+ className);
+                            ComponentName cn = new ComponentName(packageName, className);
+                            alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
+                            palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);}   //Если флаг установлен - используем найденное приложение будильника
                       else {alarmClockIntent = new Intent(AlarmClock.ACTION_SET_ALARM);             //Настройка вызова встроенного приложения часов-будильника вторым способом - через интент аламклоку
                             alarmClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             palarm = PendingIntent.getActivity(context, widgetID, alarmClockIntent, 0);} //Intent мы упаковываем в PendingIntent, конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
         widgetView.setOnClickPendingIntent(R.id.widlayout, palarm);   //устанавливаем вызов будильника по нажатию на лайот
-        Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
 
 /*        //Настройка вызова встроенного приложения часов-будильника по нажатию на часы или время следующего будильника
         Intent alarmintent = new Intent(AlarmClock.ACTION_SET_ALARM);

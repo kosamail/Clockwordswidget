@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="config_activity_textsize">20sp</dimen>
+    <dimen name="time_textsize">38sp</dimen>
+    <dimen name="date_textsize">14sp</dimen>
+    <dimen name="alarm_textsize">14sp</dimen>
+    <dimen name="img_size">18dp</dimen>
+    <dimen name="layout_left_right_padding">10dp</dimen>
 </resources>

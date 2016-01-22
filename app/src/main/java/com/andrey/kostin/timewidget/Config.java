@@ -1,11 +1,17 @@
 package com.andrey.kostin.timewidget;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -98,12 +104,50 @@ public class Config extends Activity {
         //EditText ettime = (EditText) findViewById(R.id.ettime); //Привязываемся к эдиттексту
         //ettime.setText(wtime); //передаем время в эдит текст - не нужно далее передаю напрямую через эдитор путстринг
 
+        //Настройка вызова встроенного приложения часов-будильника по нажатию на часы или время следующего будильника
+        Context context=getApplicationContext();
+        PackageManager packageManager = context.getPackageManager();
+        Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+        // Поиск встроенного приложения будильника
+        String clockImpls[][] = {                           //список известных встроенных приложений по производителям
+                {"HTC Alarm Clock", "com.htc.android.worldclock", "com.htc.android.worldclock.WorldClockTabControl" },
+                {"Standar Alarm Clock", "com.android.deskclock", "com.android.deskclock.AlarmClock"},
+                {"Standar Alarm Clock2", "com.google.android.deskclock", "com.android.deskclock.AlarmClock"},
+                {"Froyo Nexus Alarm Clock", "com.google.android.deskclock", "com.android.deskclock.DeskClock"},
+                {"Moto Blur Alarm Clock", "com.motorola.blur.alarmclock",  "com.motorola.blur.alarmclock.AlarmClock"},
+                {"Samsung Galaxy Clock", "com.sec.android.app.clockpackage","com.sec.android.app.clockpackage.ClockPackage"} ,
+                {"Sony Ericsson Xperia Z", "com.sonyericsson.organizer", "com.sonyericsson.organizer.Organizer_WorldClock" },
+                {"ASUS Tablets", "com.asus.deskclock", "com.asus.deskclock.DeskClock"},
+                {"LG Alarm Clock", "com.lge.clock", "com.lge.clock.AlarmClockActivity"}        };
+
+        Boolean foundClockImpl = false;                         //инициализируем переменную ложью, если что-то найдется будет далее истина
+
+        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE); //берем шаредпрефененсес для дальнейшего хранении информации о встроенном приложении будильника, выбранном цвете и фоне
+        Editor editor = sp.edit();                              //создаем эдитор для записи значений в шаредпреференсес
+
+        for(int i=0; i<clockImpls.length; i++) {                //цикл в котором будем подберать известное встроенное приложени
+            String vendor =      clockImpls[i][0];              //переменная для имени производителя телефона
+            String packageName = clockImpls[i][1];              //переменная для имени пакета приложения будильника
+            String className =   clockImpls[i][2];              //переменная для имени класса приложения будильника
+            try {                                                               //делаем попытку:
+                ComponentName cn = new ComponentName(packageName, className);   //создаем новое имя компонента
+                ActivityInfo aInfo = packageManager.getActivityInfo(cn, PackageManager.GET_META_DATA);//берем активитиинфо
+                alarmClockIntent.setComponent(cn);              //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
+                Log.d(LOG_TAG, "Found " + vendor + " -> " + packageName + "/" + className);
+                foundClockImpl = true;                  //здесь в переменную флаг приложения будильника помещаем 1 - мы его нашли и можем использовать далее
+                editor.putString(PAKAGE_NAME + widgetID, packageName);   //записываем в шаредпреференсес один для всех пакаджнейм будильника
+                editor.putString(CLASS_NAME + widgetID, className);      //записываем в шаредпреференсес один для всех класснейм будильника
+//                editor.commit();                                     //сохраняем значения в шаредпреференсес
+            } catch (PackageManager.NameNotFoundException e) {Log.d(LOG_TAG, "No "+ vendor);}
+        }
+        editor.putBoolean(ALARM_FLAG + widgetID, foundClockImpl);//записываем в шаредпреференсес один для всех флаг приложения будильника
+
         // Записываем значения с экрана в Preferences
-        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE);
-        Editor editor = sp.edit();
-        editor.putInt(BACK_COLOR + widgetID, layoutbackground);//задаем бекграунд виджета
-        editor.putInt(TEXT_COLOR + widgetID, color); //задаем цвет текста виджета
-        editor.commit();
+//        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE);
+//        Editor editor = sp.edit();
+        editor.putInt(BACK_COLOR + widgetID, layoutbackground); //задаем бекграунд виджета
+        editor.putInt(TEXT_COLOR + widgetID, color);            //задаем цвет текста виджета
+        editor.commit();                                        //сохраняем значения в шаредпреференсес
 
 /*      //Передаем виджету время и дату - сейчас эти преференсес не использую потому как время и дату задаю напрямую из виджета
         editor.putString(WIDGET_TIME + widgetID, ettime.getText().toString()); //передаем виджету значение из эдиттекста - не использую
