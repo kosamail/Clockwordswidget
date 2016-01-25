@@ -8,66 +8,35 @@
     <!--android:textSize="@dimen/config_activity_textsize"-->
 
     <TextView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="   "
+        android:id="@+id/tvcircle"
+        android:background="@drawable/circle"
+        android:layout_alignTop="@+id/tvtext"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/selectcolor"
         android:id="@+id/tvtext"
+        android:textStyle="bold"
+        android:onClick="onClick"
+        android:clickable="true"
+        android:paddingStart="20dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textStyle="bold" />
+        android:layout_toRightOf="@+id/tvcircle"
+        android:layout_toEndOf="@+id/tvcircle" />
 
-    <RadioGroup
-        android:id="@+id/rgColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tvtext">
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/radio1">
-        </RadioButton>
-        <RadioButton
-            android:id="@+id/radio2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio2">
-        </RadioButton>
-        <RadioButton
-            android:id="@+id/radio3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio3">
-        </RadioButton>
-    </RadioGroup>
-    <!--EditText
-        android:id="@+id/ettime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="Time"
-        android:layout_below="@+id/rgColor"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-    </EditText>
-
-    <EditText
-        android:id="@+id/etdate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:layout_below="@+id/ettime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" /-->
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/checkzeroback"
-        android:layout_below="@+id/rgColor"
+        android:layout_below="@+id/tvcircle"
         android:id="@+id/checkzeroback" />
 
     <Button

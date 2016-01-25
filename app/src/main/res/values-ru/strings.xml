@@ -7,6 +7,6 @@
     <string name="radio1">Белый</string>
     <string name="radio2">Зеленый</string>
     <string name="radio3">Синий</string>
-    <string name="selectcolor">Выберите цвет текста:</string>
+    <string name="selectcolor">Цвет текста</string>
     <string name="checkzeroback">Прозрачный цвет фона</string>
 </resources>

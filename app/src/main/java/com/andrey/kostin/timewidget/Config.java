@@ -9,12 +9,17 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import yuku.ambilwarna.AmbilWarnaDialog;
 
 
 public class Config extends Activity {
@@ -35,6 +40,8 @@ public class Config extends Activity {
     public final static String CLASS_NAME = "class_name_";      //переменная для хранения имени класса для вызова будильника
 
     public String widtime="",widdate="";
+    int color = 0xffffffff;     //переменная для задания цвета текта
+    //int color =Color.WHITE;
 
 
     @Override
@@ -65,16 +72,30 @@ public class Config extends Activity {
         setContentView(R.layout.config);
     }
 
+    //Метод в котором вызываем диалог выбора цвета для текста
+    void openDialog(boolean supportsAlpha) {
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(Config.this, color, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                Config.this.color = color;                                   // полученный цвет присваиваем переменной цвета текста
+                TextView tvcircle = (TextView)findViewById(R.id.tvcircle);   // Находим текствью с фоновым шейп кругом
+                ((GradientDrawable)tvcircle.getBackground()).setColor(color);// изменяем цвет фона у круглого shape
+            }
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {}
+        });
+        dialog.show();
+    }
+
     //Функция обработчик нажатий
     public void onClick(View v) {
-        int selectColor = ((RadioGroup) findViewById(R.id.rgColor)).getCheckedRadioButtonId();  //заносим в переменную ид отмеченной радиобуттон
-        int color = Color.WHITE;                                                                //создаем переменную для передачи цвета текста
 
-        switch (selectColor) {                                                  //в зависимости от нажатой радиобуттон выбираем соответствующий цвет текста
-            case R.id.radio1: color = Color.parseColor("#ffffffff");break;      //#ff- первые два знака прозрачность ff 00 00 - цвет. можно задать прозрачность в диапазоне #00-ff например #66- полупрозрачный
-            case R.id.radio2: color = Color.parseColor("#aa00ff00");break;      //Полупрозрачный Зеленый цвет
-            case R.id.radio3: color = Color.BLUE;break;                         //Синий цвет
+        switch (v.getId()){       //если нажали на текст или круг  запустить метод вызова диалога выбора цвета
+                case R.id.tvtext:
+                case R.id.tvcircle:openDialog(false);break;
+                default:break;
         }
+//        if(v.getId()==R.id.tvtext){openDialog(true);}
 
         CheckBox checkzeroback=(CheckBox)findViewById(R.id.checkzeroback);      //привязываемся к чекбоксу чекзеробек
         int layoutbackground;                                                   //переменная для выбора бекграунда лайота
@@ -152,12 +173,13 @@ public class Config extends Activity {
         editor.putString(WIDTIME + widgetID, widtime); //!!! именно здесь передаем виджету время !!!
         editor.putString(WIDDATE + widgetID, widdate); //!!! именно здесь передаем виджету дату !!!
 */
-
+        if(v.getId()==R.id.button){
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         Timewidget.updateWidget(this, appWidgetManager, sp, widgetID);
         // положительный ответ
         setResult(RESULT_OK, resultValue);
         Log.d(LOG_TAG, "finish config " + widgetID);
         finish();
+        }
     }
 }
