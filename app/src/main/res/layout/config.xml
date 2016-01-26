@@ -7,17 +7,18 @@
 
     <!--android:textSize="@dimen/config_activity_textsize"-->
 
-    <TextView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:text="   "
-        android:id="@+id/tvcircle"
-        android:background="@drawable/circle"
-        android:layout_alignTop="@+id/tvtext"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivcircle"
+        android:src="@drawable/circle"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp" />
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,17 +28,19 @@
         android:textStyle="bold"
         android:onClick="onClick"
         android:clickable="true"
-        android:paddingStart="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvcircle"
-        android:layout_toEndOf="@+id/tvcircle" />
+        android:paddingStart="5dp"
+        android:layout_above="@+id/checkzeroback"
+        android:layout_toRightOf="@+id/ivcircle"
+        android:layout_toEndOf="@+id/ivcircle"
+        android:layout_marginLeft="10dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/checkzeroback"
-        android:layout_below="@+id/tvcircle"
-        android:id="@+id/checkzeroback" />
+        android:id="@+id/checkzeroback"
+        android:layout_below="@+id/ivcircle"
+/>
 
     <Button
         android:layout_width="wrap_content"

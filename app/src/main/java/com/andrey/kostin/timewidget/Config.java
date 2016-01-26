@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,8 +79,9 @@ public class Config extends Activity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 Config.this.color = color;                                   // полученный цвет присваиваем переменной цвета текста
-                TextView tvcircle = (TextView)findViewById(R.id.tvcircle);   // Находим текствью с фоновым шейп кругом
-                ((GradientDrawable)tvcircle.getBackground()).setColor(color);// изменяем цвет фона у круглого shape
+                ImageView ivcircle =(ImageView)findViewById(R.id.ivcircle);  // связываем с переменной для доступа к shape
+                ivcircle.setColorFilter(color);                              // изменяем цвет у круглого shape
+                //((GradientDrawable)tvcircle.getBackground()).setColor(color);// изменяем цвет фона у shape в случае если он назначен бекграундом
             }
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {}
@@ -92,10 +94,9 @@ public class Config extends Activity {
 
         switch (v.getId()){       //если нажали на текст или круг  запустить метод вызова диалога выбора цвета
                 case R.id.tvtext:
-                case R.id.tvcircle:openDialog(false);break;
+                case R.id.ivcircle:openDialog(true);break;
                 default:break;
         }
-//        if(v.getId()==R.id.tvtext){openDialog(true);}
 
         CheckBox checkzeroback=(CheckBox)findViewById(R.id.checkzeroback);      //привязываемся к чекбоксу чекзеробек
         int layoutbackground;                                                   //переменная для выбора бекграунда лайота

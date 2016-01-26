@@ -140,8 +140,9 @@ public class Timewidget extends AppWidgetProvider {
         //Читаем фон лайота из преференсес
         background = sp.getInt(Config.BACK_COLOR + widgetID, 0);                //заносим в переменную цвет фона лайота из преференсес
         widgetView.setInt(R.id.widlayout, "setBackgroundResource", background); //устанавливаем фон из переменной лайоту виджета
-
-        //widgetView.setInt(R.id.time, "setBackgroundColor", widсolor);// здесь задаем цвет бекграунда текствью тайм
+        widgetView.setInt(R.id.icon, "setColorFilter",textcolor );              //устанавливаем цвет имеджвью будильника
+        //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );     //устанавливаем прозрачность имеджвью будильника
+        //widgetView.setInt(R.id.widlayout, "setBackgroundColor", textcolor);   // здесь задаем цвет бекграунда лайота
 
 /*      // Настройка вызова конфигурационного экрана по нажатию на лайот - должно открываться конфигурационное Activity. Создаем Intent, который будет вызывать Config Activity, помещаем данные об ID (чтобы экран знал, какой экземпляр он настраивает), упаковываем в PendingIntent и сопоставляем view-компоненту гаечному ключу.
         Intent confIntent = new Intent(context, Config.class);//создаем интент в который помещаем вызов конфигактивити
