@@ -1,4 +1,4 @@
-package com.andrey.kostin.timewidget;
+package com.andrey.kostin.clockwordswidget;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -8,17 +8,16 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.andrey.kostin.timewidget.R;
+
+import java.util.Locale;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -39,6 +38,7 @@ public class Config extends Activity {
     public final static String ALARM_FLAG = "alarm_flag_";      //переменная флаг для определения способа вызова будильника
     public final static String PAKAGE_NAME = "pakage_name_";    //переменная для хранения имени пакаджа для вызова будильника
     public final static String CLASS_NAME = "class_name_";      //переменная для хранения имени класса для вызова будильника
+    public final static String LANG_FLAG = "lang_flag_";        //переменная флаг для определения языка локали смартфона
 
     public String widtime="",widdate="";
     int color = 0xffffffff;     //переменная для задания цвета текта
@@ -124,6 +124,12 @@ public class Config extends Activity {
         //EditText ettime = (EditText) findViewById(R.id.ettime); //Привязываемся к эдиттексту
         //ettime.setText(wtime); //передаем время в эдит текст - не нужно далее передаю напрямую через эдитор путстринг
 
+ //!!!!Определение языка системы
+        String locale = getResources().getConfiguration().locale.toString(); //Берем локаль в строковую переменную. Можно еще так взять язык экрана: String language = Locale.getDefault().getDisplayLanguage();
+        Boolean foundRU = false; //Переменная для определения языка локали Русский или нет. Инициализируем переменную ложью, предполагая что локаль не русская
+        //Log.d(LOG_TAG, "locale= "+locale);
+        if (locale.equals("ru_RU")){foundRU = true;}        //если язык локали равен RU, заносим в переменную флаг истина. Можно еще язык сравнивать: if (language.equalsIgnoreCase("русский")){}// выполняем что-то
+
         //Настройка вызова встроенного приложения часов-будильника по нажатию на часы или время следующего будильника
         Context context=getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
@@ -157,10 +163,11 @@ public class Config extends Activity {
                 foundClockImpl = true;                  //здесь в переменную флаг приложения будильника помещаем 1 - мы его нашли и можем использовать далее
                 editor.putString(PAKAGE_NAME + widgetID, packageName);   //записываем в шаредпреференсес один для всех пакаджнейм будильника
                 editor.putString(CLASS_NAME + widgetID, className);      //записываем в шаредпреференсес один для всех класснейм будильника
-//                editor.commit();                                     //сохраняем значения в шаредпреференсес
+//              editor.commit();                                     //сохраняем значения в шаредпреференсес
             } catch (PackageManager.NameNotFoundException e) {Log.d(LOG_TAG, "No "+ vendor);}
         }
-        editor.putBoolean(ALARM_FLAG + widgetID, foundClockImpl);//записываем в шаредпреференсес один для всех флаг приложения будильника
+        editor.putBoolean(ALARM_FLAG + widgetID, foundClockImpl);//записываем в шаредпреференсес флаг приложения будильника
+        editor.putBoolean(LANG_FLAG + widgetID, foundRU);       //записываем в шаредпреференсес флаг языка локали 1-RU 0-все остальные
 
         // Записываем значения с экрана в Preferences
 //        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE);
@@ -176,7 +183,7 @@ public class Config extends Activity {
 */
         if(v.getId()==R.id.button){
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        Timewidget.updateWidget(this, appWidgetManager, sp, widgetID);
+        Clockwordswidget.updateWidget(this, appWidgetManager, sp, widgetID);
         // положительный ответ
         setResult(RESULT_OK, resultValue);
         Log.d(LOG_TAG, "finish config " + widgetID);

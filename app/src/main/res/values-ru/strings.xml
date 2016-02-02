@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Часы</string>
+    <string name="app_name">Часы словами</string>
     <string name="alarmisset">Не установлен</string>
     <string name="date">Обновление</string>
     <string name="ok">Задать</string>
@@ -9,4 +9,110 @@
     <string name="radio3">Синий</string>
     <string name="selectcolor">Цвет текста</string>
     <string name="checkzeroback">Прозрачный цвет фона</string>
+
+    <string-array name="hourarr">
+        <item>НОЛЬ</item>
+        <item>ОДИН</item>
+        <item>ДВА</item>
+        <item>ТРИ</item>
+        <item>ЧЕТЫРЕ</item>
+        <item>ПЯТЬ</item>
+        <item>ШЕСТЬ</item>
+        <item>СЕМЬ</item>
+        <item>ВОСЕМЬ</item>
+        <item>ДЕВЯТЬ</item>
+        <item>ДЕСЯТЬ</item>
+        <item>ОДИННАДЦАТЬ</item>
+        <item>ДВЕНАДЦАТЬ</item>
+        <item>ЧАС</item>
+    </string-array>
+
+    <string-array name="hourGOarr">
+        <item>НОЛЬ</item>
+        <item>ПЕРВОГО</item>
+        <item>ВТОРОГО</item>
+        <item>ТРЕТЬЕГО</item>
+        <item>ЧЕТВЕРТОГО</item>
+        <item>ПЯТОГО</item>
+        <item>ШЕСТОГО</item>
+        <item>СЕДЬМОГО</item>
+        <item>ВОСЬМОГО</item>
+        <item>ДЕВЯТОГО</item>
+        <item>ДЕСЯТОГО</item>
+        <item>ОДИННАДЦАТОГО</item>
+        <item>ДВЕНАДЦАТОГО</item>
+        <item>ПЕРВОГО</item>
+    </string-array>
+
+    <string-array name="hourhvostarr">
+        <item>ЧАСОВ</item>
+        <item>ЧАС</item>
+        <item>ЧАСА</item>
+    </string-array>
+
+    <string-array name="minutehvostarr">
+        <item>МИНУТ</item>
+        <item>МИНУТА</item>
+        <item>МИНУТЫ</item>
+    </string-array>
+
+    <string-array name="slang">
+        <item>РОВНО</item>
+        <item>ПОЛОВИНА</item>
+        <item>БЕЗ ДВАДЦАТИ</item>
+        <item>БЕЗ ЧЕТВЕРТИ</item>
+        <item>БЕЗ ДЕСЯТИ</item>
+        <item>БЕЗ ПЯТИ</item>
+        <item>ПОСЛЕ</item>
+        <item>ДО</item>
+        <item>ПОЛНОЧЬ</item>
+        <item>ДВАДЦАТЬ НОЛЬ-НОЛЬ. ВСЕ ДАВНО УШЛИ ДОМОЙ</item>
+    </string-array>
+
+    <string-array name="minutearr">
+        <item>НОЛЬ</item>
+        <item>ОДНА</item>
+        <item>ДВЕ</item>
+        <item>ТРИ</item>
+        <item>ЧЕТЫРЕ</item>
+        <item>ПЯТЬ</item>
+        <item>ШЕСТЬ</item>
+        <item>СЕМЬ</item>
+        <item>ВОСЕМЬ</item>
+        <item>ДЕВЯТЬ</item>
+        <item>ДЕСЯТЬ</item>
+        <item>ОДИННАДЦАТЬ</item>
+        <item>ДВЕНАДЦАТЬ</item>
+        <item>ТРИНАДЦАТЬ</item>
+        <item>ЧЕТЫРНАДЦАТЬ</item>
+        <item>ПЯТНАДЦАТЬ</item>
+        <item>ШЕСТНАДЦАТЬ</item>
+        <item>СЕМНАДЦАТЬ</item>
+        <item>ВОСЕМНАДЦАТЬ</item>
+        <item>ДЕВЯТНАДЦАТЬ</item>
+        <item>ДВАДЦАТЬ</item>
+    </string-array>
+
+    <string-array name="minuteHIarr">
+        <item> </item>
+        <item> </item>
+        <item>ДВАДЦАТЬ</item>
+        <item>ТРИДЦАТЬ</item>
+        <item>СОРОК</item>
+        <item>ПЯТЬДЕСЯТ</item>
+    </string-array>
+
+    <string-array name="minuteLOarr">
+        <item> </item>
+        <item>ОДНА</item>
+        <item>ДВЕ</item>
+        <item>ТРИ</item>
+        <item>ЧЕТЫРЕ</item>
+        <item>ПЯТЬ</item>
+        <item>ШЕСТЬ</item>
+        <item>СЕМЬ</item>
+        <item>ВОСЕМЬ</item>
+        <item>ДЕВЯТЬ</item>
+    </string-array>
+
 </resources>

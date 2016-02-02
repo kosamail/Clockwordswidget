@@ -35,15 +35,6 @@
         android:layout_above="@+id/alarm"
         android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:layout_width="@dimen/img_size"
-        android:layout_height="@dimen/img_size"
-        android:id="@+id/icon"
-        android:src="@drawable/alarmwhite"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/alarm"
-        android:layout_toStartOf="@+id/alarm" />
-
     <TextView
         style="@style/Shadow"
         android:layout_width="wrap_content"
@@ -55,6 +46,36 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:id="@+id/imgtext"
+        android:layout_centerVertical="true" />
+
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="15dp"
+        android:id="@+id/imgdate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/imgtext" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="15dp"
+        android:id="@+id/imgalarm"
+        android:layout_below="@+id/imgdate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false" />
+
+    <ImageView
+        android:layout_width="@dimen/img_size"
+        android:layout_height="@dimen/img_size"
+        android:id="@+id/icon"
+        android:src="@drawable/alarmwhite"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/alarm" />
     <!--ImageView
         android:src="@android:drawable/ic_menu_preferences"
         android:layout_width="20dp"
