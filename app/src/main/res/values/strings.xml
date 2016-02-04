@@ -8,6 +8,11 @@
     <string name="alarmisset">Alarm not set</string>
     <string name="selectcolor">Text color</string>
     <string name="checkzeroback">Transparent background color</string>
+    <string name="rone">FONT</string>
+    <string name="rtwo">FOR THE</string>
+    <string name="rthree">WIDGET</string>
+    <string name="tvfont">Select font:</string>
+    <string name="tvback">Select color:</string>
 
     <string-array name="hourarr">
         <item>ZERO</item>

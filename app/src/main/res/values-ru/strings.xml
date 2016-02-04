@@ -9,6 +9,12 @@
     <string name="radio3">Синий</string>
     <string name="selectcolor">Цвет текста</string>
     <string name="checkzeroback">Прозрачный цвет фона</string>
+    <string name="rone">ШРИФТ</string>
+    <string name="rtwo">ДЛЯ</string>
+    <string name="rthree">ВИДЖЕТА</string>
+    <string name="tvfont">Выбор шрифта:</string>
+    <string name="tvback">Выбор цвета:</string>
+
 
     <string-array name="hourarr">
         <item>НОЛЬ</item>

@@ -8,12 +8,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.andrey.kostin.timewidget.R;
 
@@ -39,6 +42,7 @@ public class Config extends Activity {
     public final static String PAKAGE_NAME = "pakage_name_";    //переменная для хранения имени пакаджа для вызова будильника
     public final static String CLASS_NAME = "class_name_";      //переменная для хранения имени класса для вызова будильника
     public final static String LANG_FLAG = "lang_flag_";        //переменная флаг для определения языка локали смартфона
+    public final static String FONT_TYPE = "font_type_";        //переменная для хранения типа шрифта надписей
 
     public String widtime="",widdate="";
     int color = 0xffffffff;     //переменная для задания цвета текта
@@ -70,7 +74,20 @@ public class Config extends Activity {
         // отрицательный ответ
         setResult(RESULT_CANCELED, resultValue);
 
-        setContentView(R.layout.config);
+        setContentView(R.layout.config); //Указываем контент из хмл файла
+
+        //Задаем шрифт для радиобуттонов. Важно - задавать можно только после сетконтентвью
+        RadioButton radio=(RadioButton)findViewById(R.id.rone);
+        Typeface font = Typeface.createFromAsset(getAssets(), "sansita.ttf");
+        radio.setTypeface(font);
+
+        radio=(RadioButton)findViewById(R.id.rtwo);
+        font = Typeface.createFromAsset(getAssets(), "days.ttf");
+        radio.setTypeface(font);
+
+        radio=(RadioButton)findViewById(R.id.rthree);
+        font = Typeface.createFromAsset(getAssets(), "cupbold.ttf");
+        radio.setTypeface(font);
     }
 
     //Метод в котором вызываем диалог выбора цвета для текста
@@ -92,16 +109,33 @@ public class Config extends Activity {
     //Функция обработчик нажатий
     public void onClick(View v) {
 
+        //Вызываем диалог выбора цвета по нажатии на круг с текстом
         switch (v.getId()){       //если нажали на текст или круг  запустить метод вызова диалога выбора цвета
                 case R.id.tvtext:
                 case R.id.ivcircle:openDialog(true);break;
                 default:break;
         }
 
+        //Определяем состояние чекбокса
         CheckBox checkzeroback=(CheckBox)findViewById(R.id.checkzeroback);      //привязываемся к чекбоксу чекзеробек
         int layoutbackground;                                                   //переменная для выбора бекграунда лайота
         if(checkzeroback.isChecked()) {layoutbackground = R.drawable.backzero;} //в зависимости от состояния чекбокса задаем прозрачный бекграунд если 1
                                 else {layoutbackground = R.drawable.back;}      // задаем серый бекграунд если 0
+
+        //Определяем какой шрифт был выбран в радиогруппе
+        int selfont = ((RadioGroup) findViewById(R.id.rgfont)).getCheckedRadioButtonId();
+        String fonttypeface="sansita.ttf";
+        switch (selfont) {
+            case R.id.rone:
+                fonttypeface = "sansita.ttf";
+                break;
+            case R.id.rtwo:
+                fonttypeface = "days.ttf";
+                break;
+            case R.id.rthree:
+                fonttypeface = "cupbold.ttf";
+                break;
+        }
 
 /*      //Часть кода для установки времени и даты в конфигурационном активити - не применяю сейчас так как делаю это в активити виджета
         DateFormat df = new SimpleDateFormat("HH:mm"); //Задаем формат времени  09:46
@@ -172,6 +206,8 @@ public class Config extends Activity {
         // Записываем значения с экрана в Preferences
 //        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE);
 //        Editor editor = sp.edit();
+
+        editor.putString(FONT_TYPE + widgetID, fonttypeface);   //задаем тип шрифта для надписей
         editor.putInt(BACK_COLOR + widgetID, layoutbackground); //задаем бекграунд виджета
         editor.putInt(TEXT_COLOR + widgetID, color);            //задаем цвет текста виджета
         editor.commit();                                        //сохраняем значения в шаредпреференсес

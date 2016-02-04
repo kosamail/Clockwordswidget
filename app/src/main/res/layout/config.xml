@@ -7,6 +7,47 @@
 
     <!--android:textSize="@dimen/config_activity_textsize"-->
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvfont"
+        android:id="@+id/tvfont" />
+
+    <RadioGroup
+        android:id="@+id/rgfont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvfont">
+        <RadioButton
+            android:id="@+id/rone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/rone">
+        </RadioButton>
+        <RadioButton
+            android:id="@+id/rtwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rtwo">
+        </RadioButton>
+        <RadioButton
+            android:id="@+id/rthree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rthree">
+        </RadioButton>
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvback"
+        android:id="@+id/tvback"
+        android:layout_below="@+id/rgfont" />
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,11 +55,12 @@
         android:src="@drawable/circle"
         android:clickable="true"
         android:onClick="onClick"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentTop="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="6dp"
-        android:layout_marginStart="6dp" />
+        android:layout_marginStart="6dp"
+        android:layout_below="@+id/tvback" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -29,10 +71,10 @@
         android:onClick="onClick"
         android:clickable="true"
         android:paddingStart="5dp"
-        android:layout_above="@+id/checkzeroback"
         android:layout_toRightOf="@+id/ivcircle"
         android:layout_toEndOf="@+id/ivcircle"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/tvback" />
 
     <CheckBox
         android:layout_width="wrap_content"

@@ -23,10 +23,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.andrey.kostin.timewidget.R;
@@ -222,11 +224,11 @@ public class Clockwordswidget extends AppWidgetProvider {
         return finaltimestring;                             //возвращаем полученное время
     }
 
-    public static Bitmap getFontBitmap(Context context, String text, int color, float fontSizeSP) {
+    public static Bitmap getFontBitmap(Context context, String text, int color, float fontSizeSP, String fonttypeface) {
         int fontSizePX = convertDiptoPix(context, fontSizeSP);
         int pad = (fontSizePX / 9);
         Paint paint = new Paint();
-        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "sansita.ttf");
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(), fonttypeface);//здесь назначаем стиль шрифта надписи. Стиль шрифта получаем из параметров метода
         paint.setAntiAlias(true);
         paint.setTypeface(typeface);
         paint.setColor(color);
@@ -246,12 +248,23 @@ public class Clockwordswidget extends AppWidgetProvider {
         return value;
     }
 
+    public static void customView(View v, int backgroundColor, int borderColor)
+    {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setCornerRadii(new float[] { 8, 8, 8, 8, 0, 0, 0, 0 });
+        shape.setColor(backgroundColor);
+        shape.setStroke(3, borderColor);
+        v.setBackgroundDrawable(shape);
+    }
 
     static void updateWidget(Context context, AppWidgetManager appWidgetManager,SharedPreferences sp, int widgetID) { //метод выполняется внутри метода Онапдейт
 //        Log.d(LOG_TAG, "updateWidget " + widgetID);
-        Boolean flagRU = sp.getBoolean(Config.LANG_FLAG + widgetID, false);
-        String widtime = doNumberToWord(context,flagRU);          //Вызываем функцию возвращающую время словами(передаем ей контекст и флаг языка), полученное значение заносим в widtime
 
+
+        Boolean flagRU = sp.getBoolean(Config.LANG_FLAG + widgetID, false); //Берем флаг языка из преференсес
+
+        String widtime = doNumberToWord(context,flagRU);          //Вызываем функцию возвращающую время словами(передаем ей контекст и флаг языка), полученное значение заносим в widtime
 
         String widdate, nextAlarm;                  //переменные для вывода даты и времени следующего будильникаt
         SimpleDateFormat df;
@@ -275,18 +288,11 @@ public class Clockwordswidget extends AppWidgetProvider {
         String widdate = sp.getString(Config.WIDDATE + widgetID, null);
         if (widdate == null) return;*/
 
-        // Настраиваем внешний вид виджета, помещаем данные в текстовые поля
+        // Настраиваем внешний вид виджета с помощью ремотвью
         RemoteViews widgetView = new RemoteViews(context.getPackageName(),R.layout.widget);
-        widgetView.setTextViewText(R.id.time, widtime);     //!!!именно здесь передаем текст из переменной в виджет в текствью тайм
-        widgetView.setTextViewText(R.id.date, widdate);     //!!!именно здесь передаем текст из переменной в виджет в текствью дэйт
-        widgetView.setTextViewText(R.id.alarm, nextAlarm);  //!!!именно здесь передаем текст из переменной в виджет в текствью аларм
 
         //Читаем цвет текста из преференсес
         textcolor = sp.getInt(Config.TEXT_COLOR + widgetID, Color.WHITE); //берем цвет текста из преференсес, если цвет не указан выводим белый (Color.parseColor("#ffffff"))
-
-        widgetView.setTextColor(R.id.time, textcolor);      //!!!задаем цвет текста указаный в конфиг активити надписям
-        widgetView.setTextColor(R.id.date, textcolor);
-        widgetView.setTextColor(R.id.alarm, textcolor);
 
         //Читаем фон лайота из преференсес
         background = sp.getInt(Config.BACK_COLOR + widgetID, 0);                //заносим в переменную цвет фона лайота из преференсес
@@ -294,14 +300,26 @@ public class Clockwordswidget extends AppWidgetProvider {
         widgetView.setInt(R.id.icon, "setColorFilter",textcolor );              //устанавливаем цвет имеджвью будильника
         //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );     //устанавливаем прозрачность имеджвью будильника
         //widgetView.setInt(R.id.widlayout, "setBackgroundColor", textcolor);   // здесь задаем цвет бекграунда лайота
-
         //String time = (String) DateFormat.format(mTimeFormat, mCalendar);
         //RemoteViews views = new RemoteViews(getPackageName(), R.layout.main);
 
-       //!!! Выводим текст картинкой
-        widgetView.setImageViewBitmap(R.id.imgtext, getFontBitmap(context, widtime, textcolor, 15));
-        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 15));
-        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 15));
+        String fonttypeface = sp.getString(Config.FONT_TYPE + widgetID,"sansita.ttf");//Берем тип шрифта из префененсес
+
+        //!!! Выводим текст картинкой
+        widgetView.setImageViewBitmap(R.id.imgtime, getFontBitmap(context, widtime, textcolor, 55 ,fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 18 ,fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 18 ,fonttypeface));
+
+/*      //Этот фрагмент нужен если данные отображаются через текствью. Сейчас не использую потому как текст передаю картинками
+        //Передаем текст из переменных в текстовые надписи виджета
+        widgetView.setTextViewText(R.id.time, widtime);     //!!!именно здесь передаем текст из переменной в виджет в текствью тайм
+        widgetView.setTextViewText(R.id.date, widdate);     //!!!текст из переменной в текствью дэйт
+        widgetView.setTextViewText(R.id.alarm, nextAlarm);  //!!!текст из переменной в текствью аларм
+
+        //Задаем цвет текста указаный в конфиг активити текстовым надписям
+        widgetView.setTextColor(R.id.time, textcolor);
+        widgetView.setTextColor(R.id.date, textcolor);
+        widgetView.setTextColor(R.id.alarm, textcolor); */
 
 /*      // Настройка вызова конфигурационного экрана по нажатию на лайот - должно открываться конфигурационное Activity. Создаем Intent, который будет вызывать Config Activity, помещаем данные об ID (чтобы экран знал, какой экземпляр он настраивает), упаковываем в PendingIntent и сопоставляем view-компоненту гаечному ключу.
         Intent confIntent = new Intent(context, Config.class);//создаем интент в который помещаем вызов конфигактивити
@@ -326,9 +344,7 @@ public class Clockwordswidget extends AppWidgetProvider {
         widgetView.setOnClickPendingIntent(R.id.time, palarm);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
 */
 
-
-        //Вызов встроенного приложения часов-будильника по нажатию на часы или время следующего будильника если приложение будильника программой обнаружено
-
+        //Вызов встроенного приложения часов-будильника по нажатию на лайот если приложение будильника программой обнаружено
          PendingIntent palarm;
          Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
 //         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);

@@ -11,7 +11,7 @@
 
     <!-- Стиль текствью берем из папки вэльюс, там есть файл shadow хмл в нем описан стиль с именем Shadow-->
 
-    <TextView
+    <!--TextView
         style="@style/Shadow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,38 +44,38 @@
         android:id="@+id/alarm"
         android:gravity="center_horizontal"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" /-->
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:id="@+id/imgtime"
         android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:id="@+id/imgtext"
-        android:layout_centerVertical="true" />
-
 
     <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
         android:id="@+id/imgdate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="false"
-        android:layout_below="@+id/imgtext" />
+        android:layout_alignParentBottom="true" />
 
     <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="15dp"
+        android:layout_width="80dp"
+        android:layout_height="18dp"
         android:id="@+id/imgalarm"
-        android:layout_below="@+id/imgdate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="false" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
 
     <ImageView
         android:layout_width="@dimen/img_size"
         android:layout_height="@dimen/img_size"
         android:id="@+id/icon"
         android:src="@drawable/alarmwhite"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/alarm" />
+        android:layout_toLeftOf="@+id/imgalarm"
+        android:layout_alignParentBottom="true" />
     <!--ImageView
         android:src="@android:drawable/ic_menu_preferences"
         android:layout_width="20dp"
