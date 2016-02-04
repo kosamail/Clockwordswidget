@@ -17,6 +17,8 @@ import android.graphics.Color;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
+
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -26,35 +28,38 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.provider.AlarmClock;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RemoteViews;
 
 import com.andrey.kostin.timewidget.R;
 
 
-public class Clockwordswidget extends AppWidgetProvider {
+public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.OnInitListener {
 
     final static String LOG_TAG = "MYLOG";      //константа для вывода логов
     public static final String FORCE_UPDATE_WIDGET = "com.andrey.kostin.timewidget.FORCE_UPDATE"; //константа для обновления через пендингинтент
     long starttime;                             //переменная для хранения начального времени запуска алармменеджера
-    static int textcolor,background;            //переменные цвета текста и бекграунда будут заполнятся из преференсес
+    static int textcolor, background;            //переменные цвета текста и бекграунда будут заполнятся из преференсес
 //    static boolean foundClockImpl;              //переменная для определения наличия системного приложения будильника
 //    static Intent alarmClockIntent;             //Интент будет использоваться для вызова приложения будильника
 //    static PendingIntent palarm;                //переменая для пендингинтента вызова будильника
 //    static PackageManager packageManager;       //переменная пакаджменеджера будет использоваться для использования встроенного приложения будильника
+
+    private static TextToSpeech mTTS;
 
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
         Log.d(LOG_TAG, "onEnabled");
 
-     // Обновляем виджет алармменеджером
+        // Обновляем виджет алармменеджером
         AlarmManager alm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         starttime = (System.currentTimeMillis() / 60000) * 60000 + 60200;               //Начальное время alarmManager задаем так, чтобы обновления происходили когда системное время начинает отсчет следующей минуты, чтобы время на виджете менялось на 0.2 секунды позже системных частов
         alm.setRepeating(AlarmManager.RTC, starttime, 60000, getPendingIntent(context)); //для обновления используем пендингинтент из функции гетпендингинтент
-
 
 
     }
@@ -64,7 +69,9 @@ public class Clockwordswidget extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 //        Log.d(LOG_TAG, "onUpdate " + Arrays.toString(appWidgetIds));
         SharedPreferences sp = context.getSharedPreferences(Config.WIDGET_PREF, Context.MODE_PRIVATE);
-        for (int id : appWidgetIds) {updateWidget(context, appWidgetManager, sp, id);}        //вызываем метод обновления внешнего вида каждого виджета функцией updateWidget
+        for (int id : appWidgetIds) {
+            updateWidget(context, appWidgetManager, sp, id);
+        }        //вызываем метод обновления внешнего вида каждого виджета функцией updateWidget
     }
 
     @Override
@@ -73,8 +80,10 @@ public class Clockwordswidget extends AppWidgetProvider {
         Log.d(LOG_TAG, "onDeleted " + Arrays.toString(appWidgetIds));
         // Удаляем Preferences
         SharedPreferences.Editor editor = context.getSharedPreferences(Config.WIDGET_PREF, Context.MODE_PRIVATE).edit();
-        for (int widgetID : appWidgetIds) { editor.remove(Config.TEXT_COLOR + widgetID);
-                                            editor.remove(Config.BACK_COLOR + widgetID);}
+        for (int widgetID : appWidgetIds) {
+            editor.remove(Config.TEXT_COLOR + widgetID);
+            editor.remove(Config.BACK_COLOR + widgetID);
+        }
         editor.commit();
     }
 
@@ -95,7 +104,7 @@ public class Clockwordswidget extends AppWidgetProvider {
         alm.cancel(getPendingIntent(context)); //для обновления используем пендингинтент из функции гетперндингинтент
     }
 
-   @Override //Ресивер описываем для обновления через алармы
+    @Override //Ресивер описываем для обновления через алармы
     public void onReceive(Context context, Intent intent) {
         if (FORCE_UPDATE_WIDGET.equals(intent.getAction()) || AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(intent.getAction())) {
             AppWidgetManager apwm = AppWidgetManager.getInstance(context);
@@ -106,14 +115,11 @@ public class Clockwordswidget extends AppWidgetProvider {
     }
 
 
+    public static String doNumberToWord(Context context, Boolean flagRU) {                      //Функция возвращающая текущее время в строковую переменную словами
 
-
-
-    public static String doNumberToWord(Context context, Boolean flagRU){                      //Функция возвращающая текущее время в строковую переменную словами
-
-        String finaltimestring="";                                 //переменная для вывода времени словами
+        String finaltimestring = "";                                 //переменная для вывода времени словами
         SimpleDateFormat dtime;                              //переменная для задания формата часов, минут и указателя AM/PM
-        String timeitem, hourAM, hourhvost="", minutecountALL="",minutecountHI="",minutecountLO="",minutevivod="", minutehvost="";     // переменные для вывода времени из симплдэйтформата, указателя, слова "часов", количества минут, слова "минут"
+        String timeitem, hourAM, hourhvost = "", minutecountALL = "", minutecountHI = "", minutecountLO = "", minutevivod = "", minutehvost = "";     // переменные для вывода времени из симплдэйтформата, указателя, слова "часов", количества минут, слова "минут"
 
         //String[] hourarr={"НОЛЬ","ОДИН","ДВА","ТРИ","ЧЕТЫРЕ","ПЯТЬ","ШЕСТЬ","СЕМЬ","ВОСЕМЬ","ДЕВЯТЬ","ДЕСЯТЬ","ОДИННАДЦАТЬ","ДВЕНАДЦАТЬ","ЧАС"};            //массив текстовых значений часов
         //String[] hourGOarr={"НОЛЬ","ПЕРВОГО","ВТОРОГО","ТРЕТЬЕГО","ЧЕТВЕРТОГО","ПЯТОГО","ШЕСТОГО","СЕДЬМОГО","ВОСЬМОГО","ДЕВЯТОГО","ДЕСЯТОГО","ОДИННАДЦАТОГО","ДВЕНАДЦАТОГО","ПЕРВОГО"}; //массив для фраз Половина Первого, Второго...
@@ -134,13 +140,13 @@ public class Clockwordswidget extends AppWidgetProvider {
         String[] minuteLOarr = context.getResources().getStringArray(R.array.minuteLOarr);          //массив текстовых значений младшего разряда минут
 
         dtime = new SimpleDateFormat("h mm a");                         //Задаем формат часов 12 без лидирующих нулей , минуты с лидирующими нулями, указатель AM/PM через пробел
-        timeitem= dtime.format(Calendar.getInstance().getTime());       //получаем часы минуты указатель в строку разделенную пробелом
-        String time[]=timeitem.split(" ");                              //заносим в массив значения разделенные пробелом time[0]=12 часы time[1]=23 минуты time[2]=AM указатель
+        timeitem = dtime.format(Calendar.getInstance().getTime());       //получаем часы минуты указатель в строку разделенную пробелом
+        String time[] = timeitem.split(" ");                              //заносим в массив значения разделенные пробелом time[0]=12 часы time[1]=23 минуты time[2]=AM указатель
 
-        int hourint=Integer.valueOf(time[0]);                   //Переменная int текущий час
-        hourAM=time[2];                                         //Переменная стринг указатель AM/PM
+        int hourint = Integer.valueOf(time[0]);                   //Переменная int текущий час
+        hourAM = time[2];                                         //Переменная стринг указатель AM/PM
 
-        switch(hourint){                                        //выбираем соответствующую форму слова "час" которую берем из массива hourhvostarr
+        switch (hourint) {                                        //выбираем соответствующую форму слова "час" которую берем из массива hourhvostarr
             case 0:
             case 5:
             case 6:
@@ -149,83 +155,136 @@ public class Clockwordswidget extends AppWidgetProvider {
             case 9:
             case 10:
             case 11:
-            case 12: hourhvost=hourhvostarr[0]; break;          //часов
-            case 1:  hourhvost=hourhvostarr[1]; break;          //час
+            case 12:
+                hourhvost = hourhvostarr[0];
+                break;          //часов
+            case 1:
+                hourhvost = hourhvostarr[1];
+                break;          //час
             case 2:
             case 3:
-            case 4:  hourhvost=hourhvostarr[2]; break;          //часа
+            case 4:
+                hourhvost = hourhvostarr[2];
+                break;          //часа
         }
 
-        minutecountALL =time[1];                                //передаем минуты из массива в строковую переменную
-        minutecountHI = minutecountALL.substring(0,1);          //передаем первый разряд минут в строковую переменную
+        minutecountALL = time[1];                                //передаем минуты из массива в строковую переменную
+        minutecountHI = minutecountALL.substring(0, 1);          //передаем первый разряд минут в строковую переменную
         minutecountLO = minutecountALL.substring(1);            //передаем второй разряд минут в строковую переменную
-        int minuteintALL=Integer.valueOf(minutecountALL);       //Переменная для работы с общим числом минут
-        int minuteintHI=Integer.valueOf(minutecountHI);         //Переменная для работы с первым разрядом минут
-        int minuteintLO=Integer.valueOf(minutecountLO);         //Переменная для работы в вторым разрядом минут
+        int minuteintALL = Integer.valueOf(minutecountALL);       //Переменная для работы с общим числом минут
+        int minuteintHI = Integer.valueOf(minutecountHI);         //Переменная для работы с первым разрядом минут
+        int minuteintLO = Integer.valueOf(minutecountLO);         //Переменная для работы в вторым разрядом минут
 
-        if(minuteintALL<20){                                    //анализируем полученное число. Если меньше 20 то:
-            minutevivod=minutearr[minuteintALL];                //В переменную минутвывод заносим значение из массива minutearr
-        }else{                                                  //иначе:
-            minutevivod=minuteHIarr[minuteintHI]+" "+minuteLOarr[minuteintLO];}//В переменную минутвывод заносим значение десятков из массива старшего разряда minuteHIarr(значение младшего разряда)
+        if (minuteintALL < 20) {                                    //анализируем полученное число. Если меньше 20 то:
+            minutevivod = minutearr[minuteintALL];                //В переменную минутвывод заносим значение из массива minutearr
+        } else {                                                  //иначе:
+            minutevivod = minuteHIarr[minuteintHI] + " " + minuteLOarr[minuteintLO];
+        }//В переменную минутвывод заносим значение десятков из массива старшего разряда minuteHIarr(значение младшего разряда)
         //плюс значение единиц из массива minuteLOarr[значение младшего разряда]
-        if(minuteintHI==1){minutehvost=minutehvostarr[0];}      //если 10-19 ставим окончание  "минут",
-        else{                                                   //иначе выбираем с помощью свитч:
-            switch(minuteintLO){                                //выбираем соответствующую форму слова "минут" из массива minutehvostarr в зависимости от второго разряда
+        if (minuteintHI == 1) {
+            minutehvost = minutehvostarr[0];
+        }      //если 10-19 ставим окончание  "минут",
+        else {                                                   //иначе выбираем с помощью свитч:
+            switch (minuteintLO) {                                //выбираем соответствующую форму слова "минут" из массива minutehvostarr в зависимости от второго разряда
                 case 0:
                 case 5:
                 case 6:
                 case 7:
                 case 8:
-                case 9: minutehvost=minutehvostarr[0];break;    //минут
-                case 1: minutehvost=minutehvostarr[1];break;    //минута
+                case 9:
+                    minutehvost = minutehvostarr[0];
+                    break;    //минут
+                case 1:
+                    minutehvost = minutehvostarr[1];
+                    break;    //минута
                 case 2:
                 case 3:
-                case 4: minutehvost=minutehvostarr[2];break;    //минуты
+                case 4:
+                    minutehvost = minutehvostarr[2];
+                    break;    //минуты
             }
         }
-        Log.d(LOG_TAG,"Locale RU = "+flagRU+" minutecountHI = "+minuteintHI+" minutecountLO = "+minuteintLO +" minutevivod = "+minutevivod+" minutehvost="+ minutehvost+" hourAM= "+hourAM );
+        Log.d(LOG_TAG, "Locale RU = " + flagRU + " minutecountHI = " + minuteintHI + " minutecountLO = " + minuteintLO + " minutevivod = " + minutevivod + " minutehvost=" + minutehvost + " hourAM= " + hourAM);
 
-        if (flagRU){        //если локаль русская, формируем финальную фразу по правилам русского языка
-         switch(minuteintALL) {                                  //В зависимости от значения минут формируем финальную фразу, сообщающую время.
-            case 0:  if(time[2].equals("после")&&(hourint==8))  finaltimestring = slang[9];
-                                                        else finaltimestring = hourarr[hourint]+ " " + hourhvost+ " " + slang[0]; break;            //ровно
-            case 5:
-            case 10:
-            case 15:
-            case 20:
-            case 25: finaltimestring = minutevivod + " " + minutehvost + " " + hourGOarr[hourint+1]; break;
-            case 30: finaltimestring = slang[1]+" "+ hourGOarr[hourint+1]; break;               //Половина
-            case 40: finaltimestring = slang[2]+" "+ hourarr[hourint+1]; break;   //Без двадцати
-            case 45: finaltimestring = slang[3]+" "+ hourarr[hourint+1]; break;   //Без четверти
-            case 50: finaltimestring = slang[4]+" "+ hourarr[hourint+1]; break;   //Без десяти
-            case 55: finaltimestring = slang[5]+" "+ hourarr[hourint+1]; break;   //Без пяти
-            default: finaltimestring = hourarr[hourint] + " " + hourhvost + " " + minutevivod + " " + minutehvost; break;//по умолчанию выводим сформированный по правилам формат времени
-         }
-        }else{          //иначе формируем финальную фразу по правилам английского языка
-            switch(minuteintALL) {                                  //В зависимости от значения минут формируем финальную фразу, сообщающую время.
-                case 0:  finaltimestring = hourarr[hourint]+ " " + slang[0]; break;            //ровно Two o’clock
-                case 15: finaltimestring = slang[3]+ " " + slang[6]+ " "  + hourarr[hourint]; break;         //Quarter past ten
+        if (flagRU) {        //если локаль русская, формируем финальную фразу по правилам русского языка
+            switch (minuteintALL) {                                  //В зависимости от значения минут формируем финальную фразу, сообщающую время.
+                case 0:
+                    if (time[2].equals("после") && (hourint == 8)) finaltimestring = slang[9];
+                    else finaltimestring = hourarr[hourint] + " " + hourhvost + " " + slang[0];
+                    break;            //ровно
+                case 5:
+                case 10:
+                case 15:
+                case 20:
+                case 25:
+                    finaltimestring = minutevivod + " " + minutehvost + " " + hourGOarr[hourint + 1];
+                    break;
+                case 30:
+                    finaltimestring = slang[1] + " " + hourGOarr[hourint + 1];
+                    break;               //Половина
+                case 40:
+                    finaltimestring = slang[2] + " " + hourarr[hourint + 1];
+                    break;   //Без двадцати
+                case 45:
+                    finaltimestring = slang[3] + " " + hourarr[hourint + 1];
+                    break;   //Без четверти
+                case 50:
+                    finaltimestring = slang[4] + " " + hourarr[hourint + 1];
+                    break;   //Без десяти
+                case 55:
+                    finaltimestring = slang[5] + " " + hourarr[hourint + 1];
+                    break;   //Без пяти
+                default:
+                    finaltimestring = hourarr[hourint] + " " + hourhvost + " " + minutevivod + " " + minutehvost;
+                    break;//по умолчанию выводим сформированный по правилам формат времени
+            }
+        } else {          //иначе формируем финальную фразу по правилам английского языка
+            switch (minuteintALL) {                                  //В зависимости от значения минут формируем финальную фразу, сообщающую время.
+                case 0:
+                    finaltimestring = hourarr[hourint] + " " + slang[0];
+                    break;            //ровно Two o’clock
+                case 15:
+                    finaltimestring = slang[3] + " " + slang[6] + " " + hourarr[hourint];
+                    break;         //Quarter past ten
                 case 5:
                 case 10:
                 case 20:
-                case 25: finaltimestring = minutevivod + " "+ minutehvost + " " + slang[6]+ " " + hourarr[hourint]; break; //five minutes past eleven
-                case 30: finaltimestring = slang[1]+ " "+slang[7]+ " " + hourarr[hourint+1]; break;   //Половина    Half to eleven
-                case 40: finaltimestring = slang[2]+ " "+slang[7]+ " " + hourarr[hourint+1]; break;   //Без двадцати
-                case 45: finaltimestring = slang[3]+ " "+slang[7]+ " " + hourarr[hourint+1]; break;   //Без четверти Quarter to three
-                case 50: finaltimestring = slang[4]+ " "+slang[7]+ " " + hourarr[hourint+1]; break;   //Без десяти
-                case 55: finaltimestring = slang[5]+ " "+slang[7]+ " " + hourarr[hourint+1]; break;   //Без пяти
-                case 58: if(time[2].equals("PM")&&(hourint==11)) finaltimestring = minutearr[2]+ " " + minutehvost + " " + slang[7]+ " " + slang[8]; break;   //two minutes to midnight
-                default: finaltimestring = hourarr[hourint] + " " + minutevivod + " " + time[2]; break;//по умолчанию выводим сформированный по правилам формат времени four fifty five pm
+                case 25:
+                    finaltimestring = minutevivod + " " + minutehvost + " " + slang[6] + " " + hourarr[hourint];
+                    break; //five minutes past eleven
+                case 30:
+                    finaltimestring = slang[1] + " " + slang[7] + " " + hourarr[hourint + 1];
+                    break;   //Половина    Half to eleven
+                case 40:
+                    finaltimestring = slang[2] + " " + slang[7] + " " + hourarr[hourint + 1];
+                    break;   //Без двадцати
+                case 45:
+                    finaltimestring = slang[3] + " " + slang[7] + " " + hourarr[hourint + 1];
+                    break;   //Без четверти Quarter to three
+                case 50:
+                    finaltimestring = slang[4] + " " + slang[7] + " " + hourarr[hourint + 1];
+                    break;   //Без десяти
+                case 55:
+                    finaltimestring = slang[5] + " " + slang[7] + " " + hourarr[hourint + 1];
+                    break;   //Без пяти
+                case 58:
+                    if (time[2].equals("PM") && (hourint == 11))
+                        finaltimestring = minutearr[2] + " " + minutehvost + " " + slang[7] + " " + slang[8];
+                    break;   //two minutes to midnight
+                default:
+                    finaltimestring = hourarr[hourint] + " " + minutevivod + " " + time[2];
+                    break;//по умолчанию выводим сформированный по правилам формат времени four fifty five pm
             }
         }
 
-            Log.d(LOG_TAG,"numminutes = " + minuteintALL + " widtime= " + finaltimestring );
+        Log.d(LOG_TAG, "numminutes = " + minuteintALL + " widtime= " + finaltimestring);
 
         return finaltimestring;                             //возвращаем полученное время
     }
 
+    //Функция преобразования текста в картинку
     public static Bitmap getFontBitmap(Context context, String text, int color, float fontSizeSP, String fonttypeface) {
-        int fontSizePX = convertDiptoPix(context, fontSizeSP);
+        int fontSizePX = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, fontSizeSP, context.getResources().getDisplayMetrics()); //Преобразуем дип в пиксели
         int pad = (fontSizePX / 9);
         Paint paint = new Paint();
         Typeface typeface = Typeface.createFromAsset(context.getAssets(), fonttypeface);//здесь назначаем стиль шрифта надписи. Стиль шрифта получаем из параметров метода
@@ -233,6 +292,10 @@ public class Clockwordswidget extends AppWidgetProvider {
         paint.setTypeface(typeface);
         paint.setColor(color);
         paint.setTextSize(fontSizePX);
+        int textlenght = text.length();
+
+        //float size = textlenght * 0.2f;
+        //paint.setShadowLayer(1.0f, size, size, 0xFF000000);//задаем тень для текста
 
         int textWidth = (int) (paint.measureText(text) + pad * 2);
         int height = (int) (fontSizePX / 0.75);
@@ -243,28 +306,26 @@ public class Clockwordswidget extends AppWidgetProvider {
         return bitmap;
     }
 
-    public static int convertDiptoPix(Context context, float dip) {
-        int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.getResources().getDisplayMetrics());
-        return value;
-    }
-
-    public static void customView(View v, int backgroundColor, int borderColor)
-    {
+  /*  public static void customView(View v, int backgroundColor, int borderColor) {
         GradientDrawable shape = new GradientDrawable();
         shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setCornerRadii(new float[] { 8, 8, 8, 8, 0, 0, 0, 0 });
+        shape.setCornerRadii(new float[]{8, 8, 8, 8, 0, 0, 0, 0});
         shape.setColor(backgroundColor);
         shape.setStroke(3, borderColor);
         v.setBackgroundDrawable(shape);
-    }
+    }*/
 
-    static void updateWidget(Context context, AppWidgetManager appWidgetManager,SharedPreferences sp, int widgetID) { //метод выполняется внутри метода Онапдейт
+    static void updateWidget(Context context, AppWidgetManager appWidgetManager, SharedPreferences sp, int widgetID) { //метод выполняется внутри метода Онапдейт
 //        Log.d(LOG_TAG, "updateWidget " + widgetID);
+
+        //!!!Фрагмент для текст то спич
+        //mTTS = new TextToSpeech(context, this);
+        //mTTS.speak("А Васька слушает да ест", TextToSpeech.QUEUE_FLUSH, null);
 
 
         Boolean flagRU = sp.getBoolean(Config.LANG_FLAG + widgetID, false); //Берем флаг языка из преференсес
 
-        String widtime = doNumberToWord(context,flagRU);          //Вызываем функцию возвращающую время словами(передаем ей контекст и флаг языка), полученное значение заносим в widtime
+        String widtime = doNumberToWord(context, flagRU);          //Вызываем функцию возвращающую время словами(передаем ей контекст и флаг языка), полученное значение заносим в widtime
 
         String widdate, nextAlarm;                  //переменные для вывода даты и времени следующего будильникаt
         SimpleDateFormat df;
@@ -273,7 +334,9 @@ public class Clockwordswidget extends AppWidgetProvider {
 
         //Узнаем когда сработает следующий будильник и заносим значение в переменную нексталарм
         nextAlarm = Settings.System.getString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED);//добавляем информацию о ближайшем аларме. Можно еще "\u23F0 "+ размещаем в строке символ юникод будильник
-        if(nextAlarm.length()==0){nextAlarm=nextAlarm+context.getString(R.string.alarmisset);}//если будильники не установлены(тоесть строка нексталарм содержит всего два символа - будильник и пробел) то выводим фразу Аларм нот сет
+        if (nextAlarm.length() == 0) {
+            nextAlarm = nextAlarm + context.getString(R.string.alarmisset);
+        }//если будильники не установлены(тоесть строка нексталарм содержит всего два символа - будильник и пробел) то выводим фразу Аларм нот сет
 
         /*String widdate = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault() ).format(new Date()); //ради разнообразия можно задать дату одной строкой через метод гетДатеИнстанс Locale.getDefault() - формат даты по умолчанию для установленного языкового пакета Locale.English например
         SHORT is completely numeric, such as 12.13.52 or 3:30pm
@@ -289,26 +352,37 @@ public class Clockwordswidget extends AppWidgetProvider {
         if (widdate == null) return;*/
 
         // Настраиваем внешний вид виджета с помощью ремотвью
-        RemoteViews widgetView = new RemoteViews(context.getPackageName(),R.layout.widget);
+        RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.widget);
 
         //Читаем цвет текста из преференсес
         textcolor = sp.getInt(Config.TEXT_COLOR + widgetID, Color.WHITE); //берем цвет текста из преференсес, если цвет не указан выводим белый (Color.parseColor("#ffffff"))
 
         //Читаем фон лайота из преференсес
-        background = sp.getInt(Config.BACK_COLOR + widgetID, 0);                //заносим в переменную цвет фона лайота из преференсес
-        widgetView.setInt(R.id.widlayout, "setBackgroundResource", background); //устанавливаем фон из переменной лайоту виджета
-        widgetView.setInt(R.id.icon, "setColorFilter",textcolor );              //устанавливаем цвет имеджвью будильника
+//        background = sp.getInt(Config.BACK_COLOR + widgetID, 0);                //заносим в переменную хмл шейп фона лайота из преференсес
+//        widgetView.setInt(R.id.widlayout, "setBackgroundResource", background); //устанавливаем фон хмл шейп из переменной лайоту виджета
+
+        Boolean transparent = sp.getBoolean(Config.TRANSP_FLAG + widgetID, false); //Берем прозрачность фона из преференсес
+        if (transparent) {
+            background = 0x00000000;
+        }//заносим в переменную прозрачный цвет
+        else {
+            background = sp.getInt(Config.BACK_COLOR + widgetID, 0x8e585858);
+        }//заносим в переменную цвет фона лайота из преференсес
+
+        widgetView.setInt(R.id.widlayout, "setBackgroundColor", background);                //устанавливаем фон цветом из переменной лайоту виджета
+
+        widgetView.setInt(R.id.icon, "setColorFilter", textcolor);              //устанавливаем цвет имеджвью будильника
         //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );     //устанавливаем прозрачность имеджвью будильника
         //widgetView.setInt(R.id.widlayout, "setBackgroundColor", textcolor);   // здесь задаем цвет бекграунда лайота
         //String time = (String) DateFormat.format(mTimeFormat, mCalendar);
         //RemoteViews views = new RemoteViews(getPackageName(), R.layout.main);
 
-        String fonttypeface = sp.getString(Config.FONT_TYPE + widgetID,"sansita.ttf");//Берем тип шрифта из префененсес
+        String fonttypeface = sp.getString(Config.FONT_TYPE + widgetID, "sansita.ttf");//Берем тип шрифта из префененсес
 
         //!!! Выводим текст картинкой
-        widgetView.setImageViewBitmap(R.id.imgtime, getFontBitmap(context, widtime, textcolor, 55 ,fonttypeface));
-        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 18 ,fonttypeface));
-        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 18 ,fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgtime, getFontBitmap(context, widtime, textcolor, 55, fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 18, fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 18, fonttypeface));
 
 /*      //Этот фрагмент нужен если данные отображаются через текствью. Сейчас не использую потому как текст передаю картинками
         //Передаем текст из переменных в текстовые надписи виджета
@@ -345,20 +419,24 @@ public class Clockwordswidget extends AppWidgetProvider {
 */
 
         //Вызов встроенного приложения часов-будильника по нажатию на лайот если приложение будильника программой обнаружено
-         PendingIntent palarm;
-         Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
+        PendingIntent palarm;
+        Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
 //         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
-         Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+        Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
 
-        if (foundClockImpl){String packageName = sp.getString(Config.PAKAGE_NAME + widgetID, " ");
-                            String className = sp.getString(Config.CLASS_NAME + widgetID, " ");
+        if (foundClockImpl) {
+            String packageName = sp.getString(Config.PAKAGE_NAME + widgetID, " ");
+            String className = sp.getString(Config.CLASS_NAME + widgetID, " ");
 //            Log.d(LOG_TAG, "packageName = "+ packageName + " className = "+ className);
-                            ComponentName cn = new ComponentName(packageName, className);
-                            alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
-                            palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);}   //Если флаг установлен - используем найденное приложение будильника
-                      else {alarmClockIntent = new Intent(AlarmClock.ACTION_SET_ALARM);             //Настройка вызова встроенного приложения часов-будильника вторым способом - через интент аламклоку
-                            alarmClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            palarm = PendingIntent.getActivity(context, widgetID, alarmClockIntent, 0);} //Intent мы упаковываем в PendingIntent, конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
+            ComponentName cn = new ComponentName(packageName, className);
+            alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
+            palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);
+        }   //Если флаг установлен - используем найденное приложение будильника
+        else {
+            alarmClockIntent = new Intent(AlarmClock.ACTION_SET_ALARM);             //Настройка вызова встроенного приложения часов-будильника вторым способом - через интент аламклоку
+            alarmClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            palarm = PendingIntent.getActivity(context, widgetID, alarmClockIntent, 0);
+        } //Intent мы упаковываем в PendingIntent, конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
         widgetView.setOnClickPendingIntent(R.id.widlayout, palarm);   //устанавливаем вызов будильника по нажатию на лайот
 
 /*        //Настройка вызова встроенного приложения часов-будильника по нажатию на часы или время следующего будильника
@@ -380,5 +458,17 @@ public class Clockwordswidget extends AppWidgetProvider {
 
         // Обновляем виджет
         appWidgetManager.updateAppWidget(widgetID, widgetView);
+    }
+
+    @Override
+    public void onInit(int status) {//метод для текст то спич
+        if (status == TextToSpeech.SUCCESS) {
+            int result = mTTS.setLanguage(Locale.getDefault());
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.d(LOG_TAG, "Извините, этот язык не поддерживается");
+            } else {  Log.d(LOG_TAG, "ОК!!!"); }
+
+        } else {
+            Log.d(LOG_TAG, "Ошибка!");}
     }
 }

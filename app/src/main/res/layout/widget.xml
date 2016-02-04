@@ -75,7 +75,7 @@
         android:id="@+id/icon"
         android:src="@drawable/alarmwhite"
         android:layout_toLeftOf="@+id/imgalarm"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"/>
     <!--ImageView
         android:src="@android:drawable/ic_menu_preferences"
         android:layout_width="20dp"

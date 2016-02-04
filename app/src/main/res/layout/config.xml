@@ -60,7 +60,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp"
-        android:layout_below="@+id/tvback" />
+        android:layout_below="@+id/tvback"
+        android:layout_marginTop="6dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -74,14 +75,45 @@
         android:layout_toRightOf="@+id/ivcircle"
         android:layout_toEndOf="@+id/ivcircle"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/tvback" />
+        android:layout_below="@+id/tvback"
+        android:layout_marginTop="6dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivcircleback"
+        android:src="@drawable/circleback"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp"
+        android:layout_below="@+id/ivcircle"
+        android:layout_marginTop="6dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/selectback"
+        android:id="@+id/tvtextback"
+        android:textStyle="bold"
+        android:onClick="onClick"
+        android:clickable="true"
+        android:paddingStart="5dp"
+        android:layout_toRightOf="@+id/ivcircle"
+        android:layout_toEndOf="@+id/ivcircle"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/ivcircle"
+        android:layout_marginTop="6dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/checkzeroback"
         android:id="@+id/checkzeroback"
-        android:layout_below="@+id/ivcircle"
+        android:layout_below="@+id/ivcircleback"
 />
 
     <Button

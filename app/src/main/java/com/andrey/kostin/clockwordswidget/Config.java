@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,10 +43,12 @@ public class Config extends Activity {
     public final static String PAKAGE_NAME = "pakage_name_";    //переменная для хранения имени пакаджа для вызова будильника
     public final static String CLASS_NAME = "class_name_";      //переменная для хранения имени класса для вызова будильника
     public final static String LANG_FLAG = "lang_flag_";        //переменная флаг для определения языка локали смартфона
+    public final static String TRANSP_FLAG = "transp_flag_";    //переменная флаг для установки прозрачного фона виджета
     public final static String FONT_TYPE = "font_type_";        //переменная для хранения типа шрифта надписей
 
     public String widtime="",widdate="";
     int color = 0xffffffff;     //переменная для задания цвета текта
+    int colorback = 0x8e585858; //переменная для задания цвета фона
     //int color =Color.WHITE;
 
 
@@ -91,12 +94,15 @@ public class Config extends Activity {
     }
 
     //Метод в котором вызываем диалог выбора цвета для текста
-    void openDialog(boolean supportsAlpha) {
+    void openDialog(boolean supportsAlpha, final boolean target) {
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(Config.this, color, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                Config.this.color = color;                                   // полученный цвет присваиваем переменной цвета текста
-                ImageView ivcircle =(ImageView)findViewById(R.id.ivcircle);  // связываем с переменной для доступа к shape
+                ImageView ivcircle;
+                if(target)  {Config.this.color = color;                                   // полученный цвет присваиваем переменной цвета текста
+                             ivcircle =(ImageView)findViewById(R.id.ivcircle);}           // связываем с переменной для доступа к shape текстового кружка
+                        else{Config.this.colorback = Color.argb(190, Color.red(color), Color.green(color), Color.blue(color));// полученному цвету присваиваем альфа прозрачность 190 и присваиваем переменной цвета фона
+                             ivcircle =(ImageView)findViewById(R.id.ivcircleback);}       // связываем с переменной для доступа к shape фонового кружка
                 ivcircle.setColorFilter(color);                              // изменяем цвет у круглого shape
                 //((GradientDrawable)tvcircle.getBackground()).setColor(color);// изменяем цвет фона у shape в случае если он назначен бекграундом
             }
@@ -110,17 +116,28 @@ public class Config extends Activity {
     public void onClick(View v) {
 
         //Вызываем диалог выбора цвета по нажатии на круг с текстом
+
         switch (v.getId()){       //если нажали на текст или круг  запустить метод вызова диалога выбора цвета
                 case R.id.tvtext:
-                case R.id.ivcircle:openDialog(true);break;
+                case R.id.ivcircle:openDialog(true,true);break;
+                case R.id.tvtextback:
+                case R.id.ivcircleback:openDialog(true,false);break;
                 default:break;
         }
 
         //Определяем состояние чекбокса
         CheckBox checkzeroback=(CheckBox)findViewById(R.id.checkzeroback);      //привязываемся к чекбоксу чекзеробек
+
+        boolean transparent;
+        if(checkzeroback.isChecked()) {transparent = true;} //в зависимости от состояния чекбокса задаем прозрачный бекграунд если 1
+        else {transparent = false;}                         // не меняем бекграунд если 0
+
+/*
         int layoutbackground;                                                   //переменная для выбора бекграунда лайота
         if(checkzeroback.isChecked()) {layoutbackground = R.drawable.backzero;} //в зависимости от состояния чекбокса задаем прозрачный бекграунд если 1
                                 else {layoutbackground = R.drawable.back;}      // задаем серый бекграунд если 0
+*/
+
 
         //Определяем какой шрифт был выбран в радиогруппе
         int selfont = ((RadioGroup) findViewById(R.id.rgfont)).getCheckedRadioButtonId();
@@ -202,13 +219,15 @@ public class Config extends Activity {
         }
         editor.putBoolean(ALARM_FLAG + widgetID, foundClockImpl);//записываем в шаредпреференсес флаг приложения будильника
         editor.putBoolean(LANG_FLAG + widgetID, foundRU);       //записываем в шаредпреференсес флаг языка локали 1-RU 0-все остальные
+        editor.putBoolean(TRANSP_FLAG + widgetID, transparent); //записываем в шаредпреференсес флаг установки прозрачности фона виджета 1-прозрачен 0-не прозрачен
 
         // Записываем значения с экрана в Preferences
 //        SharedPreferences sp = getSharedPreferences(WIDGET_PREF, MODE_PRIVATE);
 //        Editor editor = sp.edit();
 
         editor.putString(FONT_TYPE + widgetID, fonttypeface);   //задаем тип шрифта для надписей
-        editor.putInt(BACK_COLOR + widgetID, layoutbackground); //задаем бекграунд виджета
+//        editor.putInt(BACK_COLOR + widgetID, layoutbackground); //задаем бекграунд виджета ид хмл бекграунда
+        editor.putInt(BACK_COLOR + widgetID, colorback); //задаем бекграунд виджета цветом
         editor.putInt(TEXT_COLOR + widgetID, color);            //задаем цвет текста виджета
         editor.commit();                                        //сохраняем значения в шаредпреференсес
 

@@ -8,6 +8,7 @@
     <string name="radio2">Зеленый</string>
     <string name="radio3">Синий</string>
     <string name="selectcolor">Цвет текста</string>
+    <string name="selectback">Цвет фона</string>
     <string name="checkzeroback">Прозрачный цвет фона</string>
     <string name="rone">ШРИФТ</string>
     <string name="rtwo">ДЛЯ</string>
