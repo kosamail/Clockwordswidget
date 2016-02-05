@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+//import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +21,7 @@ import android.widget.RadioGroup;
 
 import com.andrey.kostin.timewidget.R;
 
-import java.util.Locale;
+//import java.util.Locale;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -85,7 +85,7 @@ public class Config extends Activity {
         radio.setTypeface(font);
 
         radio=(RadioButton)findViewById(R.id.rtwo);
-        font = Typeface.createFromAsset(getAssets(), "days.ttf");
+        font = Typeface.createFromAsset(getAssets(), "unisans.otf");
         radio.setTypeface(font);
 
         radio=(RadioButton)findViewById(R.id.rthree);
@@ -101,7 +101,8 @@ public class Config extends Activity {
                 ImageView ivcircle;
                 if(target)  {Config.this.color = color;                                   // полученный цвет присваиваем переменной цвета текста
                              ivcircle =(ImageView)findViewById(R.id.ivcircle);}           // связываем с переменной для доступа к shape текстового кружка
-                        else{Config.this.colorback = Color.argb(190, Color.red(color), Color.green(color), Color.blue(color));// полученному цвету присваиваем альфа прозрачность 190 и присваиваем переменной цвета фона
+                        else{Config.this.colorback = color;
+                    //Config.this.colorback = Color.argb(190, Color.red(color), Color.green(color), Color.blue(color));// полученному цвету присваиваем альфа прозрачность 190 и присваиваем переменной цвета фона
                              ivcircle =(ImageView)findViewById(R.id.ivcircleback);}       // связываем с переменной для доступа к shape фонового кружка
                 ivcircle.setColorFilter(color);                              // изменяем цвет у круглого shape
                 //((GradientDrawable)tvcircle.getBackground()).setColor(color);// изменяем цвет фона у shape в случае если он назначен бекграундом
@@ -147,7 +148,7 @@ public class Config extends Activity {
                 fonttypeface = "sansita.ttf";
                 break;
             case R.id.rtwo:
-                fonttypeface = "days.ttf";
+                fonttypeface = "unisans.otf";
                 break;
             case R.id.rthree:
                 fonttypeface = "cupbold.ttf";

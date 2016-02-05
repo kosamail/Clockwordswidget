@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tvfont"
-        android:id="@+id/tvfont" />
+        android:id="@+id/tvfont"
+        android:textStyle="bold" />
 
     <RadioGroup
         android:id="@+id/rgfont"
@@ -19,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tvfont">
+        android:layout_below="@+id/tvfont"
+        android:layout_marginTop="1dp">
         <RadioButton
             android:id="@+id/rone"
             android:layout_width="wrap_content"
@@ -46,7 +48,9 @@
         android:layout_height="wrap_content"
         android:text="@string/tvback"
         android:id="@+id/tvback"
-        android:layout_below="@+id/rgfont" />
+        android:layout_below="@+id/rgfont"
+        android:textStyle="bold"
+        android:layout_marginTop="1dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -76,7 +80,7 @@
         android:layout_toEndOf="@+id/ivcircle"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/tvback"
-        android:layout_marginTop="6dp" />
+        android:layout_marginTop="5dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -91,7 +95,7 @@
         android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp"
         android:layout_below="@+id/ivcircle"
-        android:layout_marginTop="6dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -114,7 +118,7 @@
         android:text="@string/checkzeroback"
         android:id="@+id/checkzeroback"
         android:layout_below="@+id/ivcircleback"
-/>
+        android:layout_marginTop="2dp" />
 
     <Button
         android:layout_width="wrap_content"

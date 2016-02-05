@@ -10,7 +10,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.res.Resources;
+//import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,14 +25,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
+//import android.graphics.drawable.GradientDrawable;
 import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.View;
-import android.widget.Button;
+//import android.view.View;
 import android.widget.RemoteViews;
 
 import com.andrey.kostin.timewidget.R;
@@ -355,7 +354,7 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
         RemoteViews widgetView = new RemoteViews(context.getPackageName(), R.layout.widget);
 
         //Читаем цвет текста из преференсес
-        textcolor = sp.getInt(Config.TEXT_COLOR + widgetID, Color.WHITE); //берем цвет текста из преференсес, если цвет не указан выводим белый (Color.parseColor("#ffffff"))
+        textcolor = sp.getInt(Config.TEXT_COLOR + widgetID, Color.WHITE);         //берем цвет текста из преференсес, если цвет не указан выводим белый (Color.parseColor("#ffffff"))
 
         //Читаем фон лайота из преференсес
 //        background = sp.getInt(Config.BACK_COLOR + widgetID, 0);                //заносим в переменную хмл шейп фона лайота из преференсес
@@ -366,14 +365,15 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
             background = 0x00000000;
         }//заносим в переменную прозрачный цвет
         else {
-            background = sp.getInt(Config.BACK_COLOR + widgetID, 0x8e585858);
-        }//заносим в переменную цвет фона лайота из преференсес
+            background = sp.getInt(Config.BACK_COLOR + widgetID, 0x8e585858);      //заносим в переменную цвет фона лайота из преференсес
+        }
 
-        widgetView.setInt(R.id.widlayout, "setBackgroundColor", background);                //устанавливаем фон цветом из переменной лайоту виджета
+        widgetView.setInt(R.id.widlayout, "setBackgroundColor", background);       //устанавливаем фон цветом из переменной лайоту виджета
 
-        widgetView.setInt(R.id.icon, "setColorFilter", textcolor);              //устанавливаем цвет имеджвью будильника
-        //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );     //устанавливаем прозрачность имеджвью будильника
-        //widgetView.setInt(R.id.widlayout, "setBackgroundColor", textcolor);   // здесь задаем цвет бекграунда лайота
+        widgetView.setInt(R.id.icon, "setColorFilter", textcolor);                 //устанавливаем цвет имеджвью будильника
+        widgetView.setInt(R.id.imgsettings, "setColorFilter", textcolor);          //устанавливаем цвет имеджвью шестиренки
+        //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );        //устанавливаем прозрачность имеджвью будильника
+        //widgetView.setInt(R.id.widlayout, "setBackgroundColor", textcolor);      // здесь задаем цвет бекграунда лайота
         //String time = (String) DateFormat.format(mTimeFormat, mCalendar);
         //RemoteViews views = new RemoteViews(getPackageName(), R.layout.main);
 
@@ -381,8 +381,15 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
 
         //!!! Выводим текст картинкой
         widgetView.setImageViewBitmap(R.id.imgtime, getFontBitmap(context, widtime, textcolor, 55, fonttypeface));
-        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 18, fonttypeface));
-        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 18, fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgdate, getFontBitmap(context, widdate, textcolor, 14, fonttypeface));
+        widgetView.setImageViewBitmap(R.id.imgalarm, getFontBitmap(context, nextAlarm, textcolor, 14, fonttypeface));
+
+        // Настройка вызова конфигурационного экрана по нажатию на шестеренку - должно открываться конфигурационное Activity. Создаем Intent, который будет вызывать Config Activity, помещаем данные об ID (чтобы экран знал, какой экземпляр он настраивает), упаковываем в PendingIntent и сопоставляем view-компоненту гаечному ключу.
+        Intent confIntent = new Intent(context, Config.class);//создаем интент в который помещаем вызов конфигактивити
+        confIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
+        confIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        PendingIntent pIntent = PendingIntent.getActivity(context, widgetID, confIntent, 0); //Intent мы упаковываем в PendingIntent
+        widgetView.setOnClickPendingIntent(R.id.imgsettings, pIntent);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
 
 /*      //Этот фрагмент нужен если данные отображаются через текствью. Сейчас не использую потому как текст передаю картинками
         //Передаем текст из переменных в текстовые надписи виджета
@@ -393,41 +400,24 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
         //Задаем цвет текста указаный в конфиг активити текстовым надписям
         widgetView.setTextColor(R.id.time, textcolor);
         widgetView.setTextColor(R.id.date, textcolor);
-        widgetView.setTextColor(R.id.alarm, textcolor); */
+        widgetView.setTextColor(R.id.alarm, textcolor);
 
-/*      // Настройка вызова конфигурационного экрана по нажатию на лайот - должно открываться конфигурационное Activity. Создаем Intent, который будет вызывать Config Activity, помещаем данные об ID (чтобы экран знал, какой экземпляр он настраивает), упаковываем в PendingIntent и сопоставляем view-компоненту гаечному ключу.
-        Intent confIntent = new Intent(context, Config.class);//создаем интент в который помещаем вызов конфигактивити
-        confIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
-        confIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
-        PendingIntent pIntent = PendingIntent.getActivity(context, widgetID, confIntent, 0); //Intent мы упаковываем в PendingIntent
-        widgetView.setOnClickPendingIntent(R.id.widlayout, pIntent);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
-
-        // Обновление виджета по нажатию на лайот
+        // Обновление виджета по нажатию на лайот. Сейчас не использую потому что обновляется по расписанию алармменеджером
         Intent upIntent = new Intent(context, Clockwordswidget.class);
         upIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         upIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{widgetID});
         pIntent = PendingIntent.getBroadcast(context, widgetID, upIntent, 0);
         widgetView.setOnClickPendingIntent(R.id.widlayout, pIntent);
-
-        //Настройка вызова будильника новой задачи будильника по нажатию на часы
-        Intent alarmintent = new Intent(AlarmClock.ACTION_SET_ALARM);
-        alarmintent.putExtra(AlarmClock.EXTRA_MESSAGE, "New Alarm");
-        alarmintent.putExtra(AlarmClock.EXTRA_HOUR, 10);
-        alarmintent.putExtra(AlarmClock.EXTRA_MINUTES, 30);
-        PendingIntent palarm = PendingIntent.getActivity(context, 0, alarmintent, 0); //Intent мы упаковываем в PendingIntent
-        widgetView.setOnClickPendingIntent(R.id.time, palarm);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
-*/
+       */
 
         //Вызов встроенного приложения часов-будильника по нажатию на лайот если приложение будильника программой обнаружено
         PendingIntent palarm;
         Boolean foundClockImpl = sp.getBoolean(Config.ALARM_FLAG + widgetID, false);                                   //берем флаг выбора приложения будильника из шаредпреференсес
-//         Log.d(LOG_TAG, "foundClockImpl = "+ foundClockImpl);
         Intent alarmClockIntent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
 
         if (foundClockImpl) {
             String packageName = sp.getString(Config.PAKAGE_NAME + widgetID, " ");
             String className = sp.getString(Config.CLASS_NAME + widgetID, " ");
-//            Log.d(LOG_TAG, "packageName = "+ packageName + " className = "+ className);
             ComponentName cn = new ComponentName(packageName, className);
             alarmClockIntent.setComponent(cn);      //здесь в интент помещаем имя пакаджа будильника и класса будильника для дальнейшего использования
             palarm = PendingIntent.getActivity(context, 0, alarmClockIntent, 0);
@@ -446,8 +436,16 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
         PendingIntent palarm = PendingIntent.getActivity(context, widgetID, alarmintent, 0); //Intent мы упаковываем в PendingIntent
         widgetView.setOnClickPendingIntent(R.id.time, palarm);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
         widgetView.setOnClickPendingIntent(R.id.alarm, palarm);     //устанавливаем вызов будильника по нажатию на текствью аларм
-*/
-/*      Настройка вызова браузера по нажатию на дату
+
+        //Настройка вызова будильника новой задачи будильника по нажатию на часы
+        Intent alarmintent = new Intent(AlarmClock.ACTION_SET_ALARM);
+        alarmintent.putExtra(AlarmClock.EXTRA_MESSAGE, "New Alarm");
+        alarmintent.putExtra(AlarmClock.EXTRA_HOUR, 10);
+        alarmintent.putExtra(AlarmClock.EXTRA_MINUTES, 30);
+        PendingIntent palarm = PendingIntent.getActivity(context, 0, alarmintent, 0); //Intent мы упаковываем в PendingIntent
+        widgetView.setOnClickPendingIntent(R.id.time, palarm);      //конкретному view-компоненту мы методом setOnClickPendingIntent сопоставляем PendingIntent. И когда будет совершено нажатие на этот view, система достанет Intent из PendingIntent и отправит его по назначению
+
+        //Настройка вызова браузера по нажатию на дату
         Intent internet = new Intent();
         internet.setAction(Intent.ACTION_VIEW);
         internet.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -455,7 +453,6 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
         pIntent = PendingIntent.getActivity(context, widgetID, internet, 0);
         widgetView.setOnClickPendingIntent(R.id.date, pIntent);
 */
-
         // Обновляем виджет
         appWidgetManager.updateAppWidget(widgetID, widgetView);
     }
