@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@drawable/backzero"
     android:id="@+id/widlayout"
     android:padding="1dp">
 
@@ -73,11 +73,9 @@
         android:layout_width="@dimen/img_size"
         android:layout_height="@dimen/img_size"
         android:id="@+id/icon"
-        android:src="@drawable/alarmwhite"
         android:layout_toLeftOf="@+id/imgalarm"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
     <ImageView
-        android:src="@drawable/settings"
         android:layout_width="14dp"
         android:layout_height="14dp"
         android:id="@+id/imgsettings"

@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 //import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import java.text.SimpleDateFormat;
@@ -370,6 +371,10 @@ public class Clockwordswidget extends AppWidgetProvider implements TextToSpeech.
 
         widgetView.setInt(R.id.widlayout, "setBackgroundColor", background);       //устанавливаем фон цветом из переменной лайоту виджета
 
+        //Задаем иконки шестеренка и будильник программно из ресурсов
+       widgetView.setImageViewResource(R.id.icon,R.drawable.alarmwhite);
+       widgetView.setImageViewResource(R.id.imgsettings,R.drawable.settings);
+        //Задаем иконкам цвет текста
         widgetView.setInt(R.id.icon, "setColorFilter", textcolor);                 //устанавливаем цвет имеджвью будильника
         widgetView.setInt(R.id.imgsettings, "setColorFilter", textcolor);          //устанавливаем цвет имеджвью шестиренки
         //widgetView.setInt(R.id.icon, "setAlpha",Color.alpha(textcolor) );        //устанавливаем прозрачность имеджвью будильника
